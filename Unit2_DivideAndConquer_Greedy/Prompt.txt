@@ -1,0 +1,13 @@
+Draw a binary tree showing the optimal merge pattern for files of sizes 10, 20, 30, and 40.
+
+The tree should clearly show:
+
+10 + 20 = 30
+30 + 30 = 60
+40 + 60 = 100
+
+Show the file sizes and merged values clearly in the nodes.
+
+Display the total merge cost as 190.
+
+Create a clean academic diagram suitable for a Data Structures and Algorithms project presentation.
