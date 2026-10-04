@@ -1,0 +1,32 @@
+Create a clean academic line chart titled "Sorting Complexity: Merge Sort vs Quick Sort".
+
+X-axis: Input Size (n) with values 10, 100, and 1000.
+
+Y-axis: Estimated Operations.
+
+Plot two lines:
+
+1. Merge Sort — O(n log n)
+   Values: 33.22, 664.39, 9965.78
+
+2. Quick Sort — Average Case O(n log n)
+   Values: 33.22, 664.39, 9965.78
+
+Use different marker styles for the two algorithms, even though their theoretical values overlap.
+
+Include:
+
+* Chart title
+* X-axis label
+* Y-axis label
+* Legend
+* Grid
+* Clear data points
+* Professional academic appearance
+
+Add a small note:
+"Quick Sort shown for average-case O(n log n)."
+
+Do not invent benchmark timings. Use only the values provided above.
+
+The diagram should be suitable for a Data Structures and Algorithms project submission.
