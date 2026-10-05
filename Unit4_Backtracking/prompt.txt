@@ -1,0 +1,3 @@
+Tool: Claude
+Prompt:
+Draw a state space tree for the 4-Queens problem using backtracking. Root is an empty board. Each level places one queen in the next row (Q1 to Q4), with branches labeled by column 1–4. Show the Q1=1 subtree with all its branches, and show the paths for Q1=2, Q1=3 and Q1=4. Mark invalid (conflicting) nodes and dead-end branches in red with an X. Mark valid partial placements in green and the two final solutions [2,4,1,3] and [3,1,4,2] with a gold border. Clean white background, readable labels, top-to-bottom layout.
