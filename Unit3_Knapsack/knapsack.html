@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>0/1 Knapsack DP Table</title>
+<style>
+  :root { --bg:#fbfaf7; --fg:#1d2433; --line:#c9cfdb; --head:#e3e9f4; --take:#8fd694; --path:#fff1a8; --accent:#1f4fa3; }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg:#161a22; --fg:#e8ebf2; --line:#3a4254; --head:#262d3d; --take:#2f7a3a; --path:#6b5d12; --accent:#8fb2ff; }
+  }
+  body { margin:0; padding:24px; background:var(--bg); color:var(--fg); font:16px/1.5 Georgia, "Times New Roman", serif; }
+  main { max-width:1000px; margin:0 auto; }
+  h1 { font-size:1.6rem; margin:0 0 4px; }
+  p.sub { margin:0 0 20px; opacity:.8; }
+  form { display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:12px; margin-bottom:12px; }
+  label { display:flex; flex-direction:column; gap:4px; font-size:.9rem; }
+  input { font:inherit; padding:8px; border:1px solid var(--line); border-radius:4px; background:transparent; color:inherit; }
+  button { font:inherit; padding:10px 18px; border:0; border-radius:4px; background:var(--accent); color:var(--bg); cursor:pointer; }
+  button:focus-visible, input:focus-visible { outline:3px solid var(--accent); outline-offset:2px; }
+  #error { color:#c0392b; min-height:1.4em; margin:8px 0; }
+  #result { font-weight:bold; margin:12px 0; }
+  .wrap { overflow-x:auto; }
+  table { border-collapse:collapse; text-align:center; }
+  th, td { border:1px solid var(--line); min-width:46px; padding:8px 10px; }
+  th { background:var(--head); }
+  td.take { background:var(--take); font-weight:bold; }
+  td.path { background:var(--path); }
+  .key span { display:inline-block; width:14px; height:14px; margin:0 6px -2px 12px; border:1px solid var(--line); }
+</style>
+</head>
+<body>
+<main>
+  <h1>0/1 Knapsack DP Table</h1>
+  <p class="sub">Enter any items and capacity to see the table and which items are included.</p>
+  <form id="f">
+    <label>Weights (space or comma separated)<input id="w" value="2 3 4 5"></label>
+    <label>Values (same order)<input id="v" value="3 4 5 6"></label>
+    <label>Capacity<input id="c" type="number" min="0" value="10"></label>
+    <button type="submit">Show table</button>
+  </form>
+  <div id="error" role="alert"></div>
+  <div id="result"></div>
+  <div class="key"><span style="background:var(--take)"></span>Item included<span style="background:var(--path)"></span>Traceback path (item skipped)</div>
+  <div class="wrap"><table id="t"></table></div>
+</main>
+<script>
+function parse(s) { return s.trim().split(/[\s,]+/).filter(Boolean).map(Number); }
+
+function solve(wt, val, cap) {
+  const n = wt.length;
+  const dp = Array.from({length: n + 1}, () => new Array(cap + 1).fill(0));
+  for (let i = 1; i <= n; i++)
+    for (let w = 0; w <= cap; w++) {
+      dp[i][w] = dp[i-1][w];
+      if (wt[i-1] <= w) dp[i][w] = Math.max(dp[i][w], val[i-1] + dp[i-1][w - wt[i-1]]);
+    }
+  const taken = new Set(), path = new Set(), chosen = [];
+  let w = cap;
+  for (let i = n; i >= 1; i--) {
+    path.add(i + "," + w);
+    if (dp[i][w] !== dp[i-1][w]) { taken.add(i + "," + w); chosen.unshift(i); w -= wt[i-1]; }
+  }
+  path.add("0," + w);
+  return { dp, taken, path, chosen };
+}
+
+function render() {
+  const err = document.getElementById("error");
+  const wt = parse(document.getElementById("w").value);
+  const val = parse(document.getElementById("v").value);
+  const cap = Number(document.getElementById("c").value);
+  err.textContent = "";
+  if (!wt.length || wt.length !== val.length) { err.textContent = "Enter the same number of weights and values."; return; }
+  if ([...wt, ...val, cap].some(x => !Number.isInteger(x) || x < 0)) { err.textContent = "Use whole numbers of 0 or more."; return; }
+  if (cap > 100) { err.textContent = "Capacity above 100 is too wide to display."; return; }
+  const { dp, taken, path, chosen } = solve(wt, val, cap);
+  const n = wt.length;
+  document.getElementById("result").textContent =
+    "Maximum value: " + dp[n][cap] + "   |   Items included: " + (chosen.length ? chosen.join(", ") : "none");
+  let h = "<tr><th>Item \\ Capacity</th>";
+  for (let c = 0; c <= cap; c++) h += "<th>" + c + "</th>";
+  h += "</tr>";
+  for (let i = 0; i <= n; i++) {
+    h += "<tr><th>" + (i === 0 ? "0 (no items)" : "Item " + i + " (w=" + wt[i-1] + ", v=" + val[i-1] + ")") + "</th>";
+    for (let c = 0; c <= cap; c++) {
+      const k = i + "," + c;
+      h += "<td" + (taken.has(k) ? ' class="take"' : path.has(k) ? ' class="path"' : "") + ">" + dp[i][c] + "</td>";
+    }
+    h += "</tr>";
+  }
+  document.getElementById("t").innerHTML = h;
+}
+document.getElementById("f").addEventListener("submit", e => { e.preventDefault(); render(); });
+render();
+</script>
+</body>
+</html>
